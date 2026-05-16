@@ -19,6 +19,14 @@ const KEPT_CLIENTS = new Set([
   "ownership-frontend"
 ]);
 
+// Stable preprod secrets for confidential clients. The prod export masks real
+// secrets as "**********", so we replace them with fixed values that survive a
+// realm wipe + reimport — letting the preprod frontend keep the same secret in
+// its config across cycles.
+const PREPROD_CLIENT_SECRETS = {
+  "ownership-frontend": "preprod-ownership-frontend-secret",
+};
+
 const TEST_USERS = [
   {
     username: "alice",
@@ -59,6 +67,14 @@ const raw = JSON.parse(fs.readFileSync(INPUT, "utf8"));
 // Drop prod application clients; keep built-ins + the dev example.
 raw.clients = (raw.clients || []).filter((c) => KEPT_CLIENTS.has(c.clientId));
 
+// Replace the masked "**********" placeholder with a stable preprod secret so
+// re-imports don't break the preprod frontend's client config.
+for (const client of raw.clients) {
+  if (PREPROD_CLIENT_SECRETS[client.clientId]) {
+    client.secret = PREPROD_CLIENT_SECRETS[client.clientId];
+  }
+}
+
 // Drop built-in auth flows & authenticator configs (Keycloak recreates them).
 raw.authenticationFlows = (raw.authenticationFlows || []).filter((f) => !f.builtIn);
 if (raw.authenticationFlows.length === 0) delete raw.authenticationFlows;
@@ -77,8 +93,13 @@ delete raw.smtpServer;
 // Dev default: skip email verification so register flow works without SMTP.
 raw.verifyEmail = false;
 
+// Drop service-account users orphaned by the client filter above.
+raw.users = (raw.users || []).filter(
+  (u) => !u.serviceAccountClientId || KEPT_CLIENTS.has(u.serviceAccountClientId)
+);
+
 // Seed two pre-verified test users.
-raw.users = [...(raw.users || []), ...TEST_USERS];
+raw.users = [...raw.users, ...TEST_USERS];
 
 const cleaned = stripIds(raw);
 

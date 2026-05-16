@@ -750,7 +750,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "preprod-ownership-frontend-secret",
       "redirectUris": [
         "https://altered-ownership.dev.localhost:7497/api/auth/callback"
       ],
