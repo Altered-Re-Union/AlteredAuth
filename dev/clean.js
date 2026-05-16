@@ -16,6 +16,7 @@ const KEPT_CLIENTS = new Set([
   "realm-management",
   "security-admin-console",
   "localhost-test",
+  "ownership-frontend"
 ]);
 
 const TEST_USERS = [

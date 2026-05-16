@@ -8,10 +8,10 @@
   "refreshTokenMaxReuse": 0,
   "accessTokenLifespan": 300,
   "accessTokenLifespanForImplicitFlow": 900,
-  "ssoSessionIdleTimeout": 1800,
-  "ssoSessionMaxLifespan": 36000,
-  "ssoSessionIdleTimeoutRememberMe": 0,
-  "ssoSessionMaxLifespanRememberMe": 0,
+  "ssoSessionIdleTimeout": 57600,
+  "ssoSessionMaxLifespan": 57600,
+  "ssoSessionIdleTimeoutRememberMe": 2592000,
+  "ssoSessionMaxLifespanRememberMe": 5184000,
   "offlineSessionIdleTimeout": 7776000,
   "offlineSessionMaxLifespanEnabled": false,
   "offlineSessionMaxLifespan": 5184000,
@@ -268,6 +268,7 @@
           "attributes": {}
         }
       ],
+      "ownership-frontend": [],
       "admin-cli": [],
       "localhost-test": [],
       "account": [
@@ -399,6 +400,38 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
+  "users": [
+    {
+      "username": "alice",
+      "email": "alice@example.test",
+      "firstName": "Alice",
+      "lastName": "Tester",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "TestPassword1234",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "bob",
+      "email": "bob@example.test",
+      "firstName": "Bob",
+      "lastName": "Tester",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "TestPassword1234",
+          "temporary": false
+        }
+      ]
+    }
+  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -707,6 +740,77 @@
       ]
     },
     {
+      "clientId": "ownership-frontend",
+      "name": "",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "https://altered-ownership.dev.localhost:7497/api/auth/callback"
+      ],
+      "webOrigins": [
+        "https://altered-ownership.dev.localhost:7497"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "logout.confirmation.enabled": "false",
+        "client.secret.creation.time": "1778704109",
+        "standard.token.exchange.enabled": "false",
+        "oauth2.jwt.authorization.grant.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "https://altered-ownership.dev.localhost:7497/*",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "use.jwks.url": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "display.on.consent.screen": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "name": "docker-v2-allow-all-mapper",
+          "protocol": "docker-v2",
+          "protocolMapper": "docker-v2-allow-all-mapper",
+          "consentRequired": false,
+          "config": {}
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "basic"
+      ],
+      "optionalClientScopes": [
+        "bga-game-history",
+        "write-collection",
+        "roles",
+        "profile",
+        "read-decks",
+        "read-collection",
+        "email"
+      ]
+    },
+    {
       "clientId": "realm-management",
       "name": "${client_realm-management}",
       "surrogateAuthRequired": false,
@@ -884,6 +988,30 @@
           }
         }
       ]
+    },
+    {
+      "name": "board-game-arena-specific",
+      "description": "BGA uses offline token so there will not be refreshed often and we may need special permissions for BGA in the future. So it's only for BGA specific tokens and not to be used eleswhere",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false",
+        "gui.order": "",
+        "consent.screen.text": "",
+        "include.in.openid.provider.metadata": "true"
+      }
+    },
+    {
+      "name": "bga-game-history",
+      "description": "Having access to all BGA history",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": "${bgaGameHistoryConsentText}",
+        "include.in.openid.provider.metadata": "true"
+      }
     },
     {
       "name": "acr",
@@ -1125,6 +1253,18 @@
       ]
     },
     {
+      "name": "write-collection",
+      "description": "Used to edit collection directly. Only a pure Re:Union app should have this, and we should limit to maybe only one that centralise everything ?",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": "",
+        "include.in.openid.provider.metadata": "true"
+      }
+    },
+    {
       "name": "write-deck",
       "description": "Right to write user decks",
       "protocol": "openid-connect",
@@ -1261,11 +1401,14 @@
           "protocolMapper": "oidc-usermodel-attribute-mapper",
           "consentRequired": false,
           "config": {
+            "aggregate.attrs": "false",
             "introspection.token.claim": "true",
+            "multivalued": "false",
             "userinfo.token.claim": "true",
             "user.attribute": "username",
             "id.token.claim": "true",
-            "access.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "false",
             "claim.name": "preferred_username",
             "jsonType.label": "String"
           }
@@ -1348,12 +1491,14 @@
           "protocolMapper": "oidc-usermodel-attribute-mapper",
           "consentRequired": false,
           "config": {
+            "aggregate.attrs": "false",
             "introspection.token.claim": "true",
+            "multivalued": "false",
             "userinfo.token.claim": "true",
             "user.attribute": "pseudo",
             "id.token.claim": "true",
             "lightweight.claim": "false",
-            "access.token.claim": "false",
+            "access.token.claim": "true",
             "claim.name": "pseudo",
             "jsonType.label": "String"
           }
@@ -1546,7 +1691,8 @@
     "read-decks",
     "write-deck",
     "email",
-    "profile"
+    "profile",
+    "bga-game-history"
   ],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
@@ -1559,7 +1705,7 @@
   },
   "loginTheme": "altered",
   "accountTheme": "keycloak.v3",
-  "adminTheme": "keycloak.v2",
+  "adminTheme": "altered-prod",
   "emailTheme": "altered",
   "eventsEnabled": false,
   "eventsListeners": [
@@ -2020,37 +2166,5 @@
   },
   "clientPolicies": {
     "policies": []
-  },
-  "users": [
-    {
-      "username": "alice",
-      "email": "alice@example.test",
-      "firstName": "Alice",
-      "lastName": "Tester",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "TestPassword1234",
-          "temporary": false
-        }
-      ]
-    },
-    {
-      "username": "bob",
-      "email": "bob@example.test",
-      "firstName": "Bob",
-      "lastName": "Tester",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "TestPassword1234",
-          "temporary": false
-        }
-      ]
-    }
-  ]
+  }
 }
