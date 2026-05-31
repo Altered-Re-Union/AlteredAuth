@@ -24,11 +24,19 @@ const CLIENT_OVERRIDES = {
       "+",
     ],
   },
-  // Preprod-style local client for AlteredOwnership (wired in later).
+  // Used by AlteredOwnership (Keycloak__ClientId). Confidential client; the SPA's
+  // server-side OIDC code flow runs in the .NET server. The callback path is
+  // /api/auth/callback (signout /api/auth/signout-callback) — wildcard covers both.
+  // Reached in the altered-dev-environment stack on host port 8003.
   "ownership-frontend": {
     secret: "preprod-ownership-frontend-secret",
-    redirectUris: ["https://altered-ownership.dev.localhost:7497/api/auth/callback"],
-    webOrigins: ["https://altered-ownership.dev.localhost:7497"],
+    redirectUris: [
+      "http://ownership.altered.local.gd:8003/*",
+      "http://localhost:8003/*",
+    ],
+    webOrigins: [
+      "+",
+    ],
   },
   // Used by alteredcore-website (config.local.php KC_CLIENT_ID). Confidential
   // client; the site runs the auth-code + token exchange server-side. The

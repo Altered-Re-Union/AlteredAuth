@@ -836,10 +836,11 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "preprod-ownership-frontend-secret",
       "redirectUris": [
-        "https://altered-ownership.dev.localhost:7497/api/auth/callback"
+        "http://ownership.altered.local.gd:8003/*",
+        "http://localhost:8003/*"
       ],
       "webOrigins": [
-        "https://altered-ownership.dev.localhost:7497"
+        "+"
       ],
       "notBefore": 0,
       "bearerOnly": false,
