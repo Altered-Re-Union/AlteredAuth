@@ -3,7 +3,7 @@
 ARG KEYCLOAK_VERSION=26.5.0
 
 # unique-attribute-validator-provider
-FROM maven:3.9-eclipse-temurin-17-alpine AS unique-attribute-validator-provider
+FROM maven:3.9-eclipse-temurin-17 AS unique-attribute-validator-provider
 
 WORKDIR /app
 
