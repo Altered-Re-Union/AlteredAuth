@@ -14,6 +14,18 @@ RUN mvn clean package && \
     mkdir -p /result && \
     cp /app/target/unique-attribute-validator-provider-1.0-SNAPSHOT.jar /result/unique-attribute-validator-provider.jar
 
+# min-age-validator-provider
+FROM maven:3.9-eclipse-temurin-17 AS min-age-validator-provider
+
+WORKDIR /app
+
+COPY min-age-validator-provider/pom.xml .
+COPY min-age-validator-provider/src ./src
+
+RUN mvn clean package && \
+    mkdir -p /result && \
+    cp /app/target/min-age-validator-provider-1.0-SNAPSHOT.jar /result/min-age-validator-provider.jar
+
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} AS builder
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
@@ -23,6 +35,7 @@ ENV KC_FEATURES=authorization,account,account-api,docker,web-authn,client-polici
 WORKDIR /opt/keycloak
 
 COPY --from=unique-attribute-validator-provider /result/unique-attribute-validator-provider.jar /opt/keycloak/providers
+COPY --from=min-age-validator-provider /result/min-age-validator-provider.jar /opt/keycloak/providers
 
 RUN /opt/keycloak/bin/kc.sh build
 

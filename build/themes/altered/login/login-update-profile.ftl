@@ -35,7 +35,14 @@
     <#if profile?? && profile.attributes??>
       <#list profile.attributes as attribute>
         <#if systemAttrs?seq_contains(attribute.name)><#continue></#if>
-        <#assign inputType = (attribute.name == "email")?then("email", "text")>
+        <#-- Honour the user-profile "inputType" annotation (e.g. html5-date -> date);
+             fall back to email for the email field, text otherwise. -->
+        <#assign annInputType = (attribute.annotations.inputType)!"">
+        <#if annInputType?starts_with("html5-")>
+          <#assign inputType = annInputType?remove_beginning("html5-")>
+        <#else>
+          <#assign inputType = (attribute.name == "email")?then("email", "text")>
+        </#if>
         <div class="form-group">
           <label class="form-label" for="${attribute.name}">${advancedMsg(attribute.displayName!attribute.name)}</label>
           <input

@@ -60,9 +60,28 @@
       </div>
     </#if>
 
+    <#-- Date of birth: rendered explicitly as a native date picker. The label stays neutral
+         (no stated minimum age) — the min-age requirement is enforced server-side and any
+         failure surfaces as a generic message, so the form never doubles as a bypass guide. -->
+    <div class="form-group">
+      <label class="form-label" for="birthDate">${advancedMsg("profile.attributes.birthDate")}</label>
+      <input
+        class="form-control"
+        type="date"
+        id="birthDate"
+        name="birthDate"
+        value="${(register.formData.birthDate!'')}"
+        autocomplete="bday"
+        aria-invalid="<#if messagesPerField.existsError('birthDate')>true</#if>"
+      >
+      <#if messagesPerField.existsError('birthDate')>
+        <span class="form-error">${kcSanitize(messagesPerField.get('birthDate'))?no_esc}</span>
+      </#if>
+    </div>
+
     <#-- Custom user profile attributes: any declarative attribute not handled explicitly above.
          "locale" is a system attribute — Keycloak manages it via the language switcher. -->
-    <#assign builtinAttrs = ["username", "email", "firstName", "lastName", "locale"]>
+    <#assign builtinAttrs = ["username", "email", "firstName", "lastName", "locale", "birthDate"]>
     <#if profile?? && profile.attributes??>
       <#list profile.attributes as attribute>
         <#if !builtinAttrs?seq_contains(attribute.name)>

@@ -84,8 +84,10 @@ const TEST_USERS = [
     enabled: true,
     emailVerified: true,
     // "pseudo" is a required user-profile attribute (and a token claim apps rely
-    // on); without it the account is "not fully set up" and login fails.
-    attributes: { pseudo: ["alice"] },
+    // on); without it the account is "not fully set up" and login fails. Same goes
+    // for "birthDate" (min-age 16 gate) — seed a fixed adult date so the verify-
+    // profile prompt never interrupts the seeded test users.
+    attributes: { pseudo: ["alice"], birthDate: ["1990-05-15"] },
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
   {
@@ -96,7 +98,7 @@ const TEST_USERS = [
     lastName: "Tester",
     enabled: true,
     emailVerified: true,
-    attributes: { pseudo: ["bob"] },
+    attributes: { pseudo: ["bob"], birthDate: ["1988-11-02"] },
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
 ];
