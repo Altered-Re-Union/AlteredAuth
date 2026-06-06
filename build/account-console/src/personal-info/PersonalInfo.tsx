@@ -110,6 +110,13 @@ export const PersonalInfo = () => {
   return (
     <Page title={t("personalInfo")} description={t("personalInfoDescription")}>
       <Form isHorizontal onSubmit={handleSubmit(onSubmit)}>
+        {supportedLocales.length > 1 && (
+          <Alert
+            isInline
+            variant={AlertVariant.info}
+            title={t("localeChangeRelogin")}
+          />
+        )}
         <UserProfileFields
           form={form}
           userProfileMetadata={userProfileMetadata}
