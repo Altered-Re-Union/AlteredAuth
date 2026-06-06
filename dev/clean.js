@@ -87,7 +87,9 @@ const TEST_USERS = [
     // on); without it the account is "not fully set up" and login fails. Same goes
     // for "birthDate" (min-age 16 gate) — seed a fixed adult date so the verify-
     // profile prompt never interrupts the seeded test users.
-    attributes: { pseudo: ["alice"], birthDate: ["1990-05-15"] },
+    // "locale" drives the user's language; the `profile` scope's locale mapper
+    // surfaces it as the `locale` claim in the id/access tokens the APIs read.
+    attributes: { pseudo: ["alice"], birthDate: ["1990-05-15"], locale: ["en"] },
     // The realm default role carries the "account" client roles (view-profile /
     // manage-account). Seeded users injected via import don't get it automatically,
     // so without this they'd hit 401 on the account console. Name is "altered" (not
@@ -103,7 +105,7 @@ const TEST_USERS = [
     lastName: "Tester",
     enabled: true,
     emailVerified: true,
-    attributes: { pseudo: ["bob"], birthDate: ["1988-11-02"] },
+    attributes: { pseudo: ["bob"], birthDate: ["1988-11-02"], locale: ["fr"] },
     realmRoles: ["default-roles-altered"],
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
