@@ -88,6 +88,11 @@ const TEST_USERS = [
     // for "birthDate" (min-age 16 gate) — seed a fixed adult date so the verify-
     // profile prompt never interrupts the seeded test users.
     attributes: { pseudo: ["alice"], birthDate: ["1990-05-15"] },
+    // The realm default role carries the "account" client roles (view-profile /
+    // manage-account). Seeded users injected via import don't get it automatically,
+    // so without this they'd hit 401 on the account console. Name is "altered" (not
+    // "players") because the realm was renamed but the default role kept its name.
+    realmRoles: ["default-roles-altered"],
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
   {
@@ -99,6 +104,7 @@ const TEST_USERS = [
     enabled: true,
     emailVerified: true,
     attributes: { pseudo: ["bob"], birthDate: ["1988-11-02"] },
+    realmRoles: ["default-roles-altered"],
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
 ];

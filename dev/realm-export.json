@@ -418,6 +418,9 @@
           "1990-05-15"
         ]
       },
+      "realmRoles": [
+        "default-roles-altered"
+      ],
       "credentials": [
         {
           "type": "password",
@@ -442,6 +445,9 @@
           "1988-11-02"
         ]
       },
+      "realmRoles": [
+        "default-roles-altered"
+      ],
       "credentials": [
         {
           "type": "password",
@@ -1877,7 +1883,7 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "loginTheme": "altered",
-  "accountTheme": "keycloak.v3",
+  "accountTheme": "altered-account",
   "adminTheme": "altered-prod",
   "emailTheme": "altered",
   "eventsEnabled": false,
