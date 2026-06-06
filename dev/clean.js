@@ -162,6 +162,11 @@ delete raw.smtpServer;
 // Dev default: skip email verification so register flow works without SMTP.
 raw.verifyEmail = false;
 
+// Use the custom account console (altered-account-ui JAR baked into the image,
+// see build/Dockerfile) instead of the stock keycloak.v3 one. Pinned here so a
+// realm re-import doesn't silently fall back to the stock template.
+raw.accountTheme = "altered-account";
+
 // Drop service-account users orphaned by the client filter above, plus any prod
 // copy of our seeded users (matched by username) so the seed list wins.
 const seededUsernames = new Set(TEST_USERS.map((u) => u.username));
