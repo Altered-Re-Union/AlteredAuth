@@ -6,7 +6,6 @@ import {
 import { Button } from "@patternfly/react-core";
 import { ExternalLinkSquareAltIcon } from "@patternfly/react-icons";
 import { useTranslation } from "react-i18next";
-import { useHref } from "react-router-dom";
 
 import { environment } from "../environment";
 import { joinPath } from "../utils/joinPath";
@@ -38,11 +37,6 @@ export const Header = () => {
   const { t } = useTranslation();
 
   const brandImage = environment.logo || "logo.svg";
-  const logoUrl = environment.logoUrl ? environment.logoUrl : "/";
-  const internalLogoHref = useHref(logoUrl);
-
-  // User can indicate that he wants an internal URL by starting it with "/"
-  const indexHref = logoUrl.startsWith("/") ? internalLogoHref : logoUrl;
 
   return (
     <KeycloakMasthead
@@ -50,7 +44,9 @@ export const Header = () => {
       keycloak={keycloak}
       features={{ hasManageAccount: false }}
       brand={{
-        href: indexHref,
+        // Logo links to the public Altered site (theme.properties `logoUrl`),
+        // rather than the realm root.
+        href: environment.logoUrl || "https://altered.re",
         src: joinPath(environment.resourceUrl, brandImage),
         alt: t("logo"),
         className: style.brand,

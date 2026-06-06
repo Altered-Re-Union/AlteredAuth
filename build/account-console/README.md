@@ -50,11 +50,40 @@ build glue are the only non-upstream files). To upgrade:
 
 ## Customizations
 
-**None yet** — this is the clean baseline. The console's nav is driven by
-`public/content.json` and `src/routes.tsx`; profile attribute labels live in the
-server-side messages of the parent theme. Future changes (e.g. dropping the
-Applications tab via `content.json`, branding via `theme.properties`) land as
-separate commits on top of this base.
+Applied on top of the vendored base:
+
+- **Brand overlay** — `theme.properties` declares `logo=logo.png`
+  (`public/logo.png`, copied from the login theme) and `styles=css/account.css`
+  (`public/css/account.css`). The CSS remaps PatternFly v5 global tokens to the
+  `altered` palette (teal/gold accents, navy background, Inter font) — including
+  the surfaces that pin their own tokens (masthead/toolbar via
+  `palette--black-1000`, main section via the `m-light` variant / `light-100`) —
+  and restyles form fields (rounded, teal focus glow, recessed read-only),
+  labels (uppercase/spaced) and buttons (rounded, gradient primary) to match the
+  login. It also keeps the masthead on a single row at every width (PatternFly
+  otherwise stacks the brand above the content below `lg`), keeps the header user
+  menu consistent (always the username dropdown, no mobile kebab, avatar hidden
+  below 768px), and hides the
+  ScrollForm "Jump to section" nav — redundant since the profile has a single
+  section — letting the form span full width. `index.ftl` forces PatternFly's dark
+  theme on regardless of the OS color-scheme (the other themes are always dark),
+  and brands the pre-React loading screen. The logo links to the public site
+  (`theme.properties` `logoUrl=https://altered.re`, read in
+  `src/root/Header.tsx`) instead of the realm root.
+- **Applications tab removed** — dropped from `public/content.json` and from
+  `src/routes.tsx` (lazy import + `ApplicationsRoute`). The vendored
+  `src/applications/*` source is left in place but is no longer routed or
+  bundled.
+- **Profile attribute labels** — `${profile.attributes.pseudo}` /
+  `${profile.attributes.birthDate}` (declared in the realm user-profile config)
+  resolve from theme messages, which the account theme didn't provide. Added
+  `maven-resources/theme/altered-account/account/messages/messages_{en,fr}.properties`
+  with `Pseudo` and `Birth Date` / `Date de naissance`. The login theme's EN
+  labels (`build/themes/altered/login/messages/messages_en.properties`) were
+  aligned to match.
+
+The console's nav is driven by `public/content.json` and `src/routes.tsx`;
+profile attribute labels live in the server-side messages of the account theme.
 
 ## Develop (live reload)
 

@@ -1,0 +1,246 @@
+/*
+ * Altered Re:Union — account console brand overlay.
+ *
+ * Remaps PatternFly v5 global design tokens to the same palette / font used by
+ * the `altered` login theme (build/themes/altered/login/resources/css/login.css)
+ * so the console matches the rest of the themes. Loaded via theme.properties
+ * `styles=css/account.css`.
+ *
+ * The console is forced into PatternFly's dark theme (see index.ftl), so the
+ * brand surface/border/text tokens are overridden under `.pf-v5-theme-dark`.
+ * That selector has higher specificity than PatternFly's own
+ * `:where(.pf-v5-theme-dark)` defaults, so these win.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+:root,
+.pf-v5-theme-dark {
+  --altered-bg:        #080c17;
+  --altered-bg-card:   #0e1525;
+  --altered-bg-hover:  #16213a;
+  --altered-border:    #1e2d45;
+  --altered-border-2:  #2a3d5c;
+  --altered-input-bg:  #111c2e;
+  --altered-input-border: #1e3048;
+  --altered-teal:      #00c2d4;
+  --altered-teal-dark: #0097a7;
+  --altered-gold:      #c9a84c;
+  --altered-gold-light:#e4c068;
+  --altered-text:      #e2e8f0;
+  --altered-text-muted:#8899aa;
+
+  /* Brand accent → PatternFly primary / interactive colours */
+  --pf-v5-global--primary-color--100:     var(--altered-teal);
+  --pf-v5-global--primary-color--200:     var(--altered-teal-dark);
+  --pf-v5-global--active-color--100:      var(--altered-teal);
+  --pf-v5-global--active-color--200:      var(--altered-teal-dark);
+  --pf-v5-global--link--Color:            var(--altered-teal);
+  --pf-v5-global--link--Color--hover:     var(--altered-gold);
+
+  /* Inter everywhere, matching the login theme */
+  --pf-v5-global--FontFamily--text:       'Inter', sans-serif;
+  --pf-v5-global--FontFamily--heading:    'Inter', sans-serif;
+  --pf-v5-global--FontFamily--sans-serif: 'Inter', sans-serif;
+}
+
+/* Brand the dark surfaces. PatternFly's dark defaults are greys
+   (#1b1d21 / #0f1214); remap them to the altered navy palette. */
+.pf-v5-theme-dark {
+  --pf-v5-global--BackgroundColor--100: var(--altered-bg-card); /* cards, nav */
+  --pf-v5-global--BackgroundColor--150: var(--altered-bg-card);
+  --pf-v5-global--BackgroundColor--200: var(--altered-bg);      /* page background */
+  --pf-v5-global--BackgroundColor--300: var(--altered-bg-hover);
+  --pf-v5-global--BackgroundColor--400: var(--altered-border);
+
+  /* The page main-section uses the "m-light" variant, which reads light-100
+     (#1b1d21 grey in dark mode). Remap it to the navy page background. */
+  --pf-v5-global--BackgroundColor--light-100: var(--altered-bg);
+
+  /* The masthead + its toolbar pin their background to palette--black-1000
+     (#030303). Remap this leaf so the whole chain resolves to brand navy. */
+  --pf-v5-global--palette--black-1000: var(--altered-bg-card);
+
+  --pf-v5-global--BorderColor--100: var(--altered-border);
+  --pf-v5-global--BorderColor--200: var(--altered-border);
+  --pf-v5-global--BorderColor--300: var(--altered-border-2);
+
+  --pf-v5-global--Color--100: var(--altered-text);
+  --pf-v5-global--Color--200: var(--altered-text-muted);
+
+  --pf-v5-global--primary-color--100: var(--altered-teal);
+  --pf-v5-global--link--Color:        var(--altered-teal);
+  --pf-v5-global--link--Color--hover: var(--altered-gold);
+}
+
+body,
+.pf-v5-c-page {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--altered-bg);
+}
+
+/* The masthead pins its background to a component token (default
+   palette--black-1000 = #030303), which its child toolbar also reads. Override
+   the token itself so both the bar and the toolbar pick up the brand navy. */
+.pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: var(--altered-bg-card);
+  border-bottom: 1px solid var(--altered-border);
+}
+
+/* In dark mode PatternFly re-pins the masthead toolbar straight to
+   palette--black-1000 via `.pf-v5-c-masthead .pf-v5-c-toolbar` (specificity
+   0,2,0). Match that specificity to keep the toolbar navy. */
+.pf-v5-c-masthead .pf-v5-c-toolbar {
+  --pf-v5-c-toolbar--BackgroundColor: var(--altered-bg-card);
+}
+
+/* Keep the header on a single row at every width. PatternFly lays the masthead
+   out as a CSS grid whose column template only resolves to an inline row at the
+   `lg` breakpoint; below that the brand and the content (user menu) stack onto
+   two rows, which looks broken for our minimal header. Rather than fight the
+   grid mode vars, take the masthead out of grid and lay it out as a simple
+   non-wrapping flex row. `.pf-v5-theme-dark .pf-v5-c-masthead` (0,2,0) strictly
+   beats the base `.pf-v5-c-masthead` (0,1,0) `display: grid`, regardless of
+   stylesheet load order; the child rules (0,3,0) beat the base child rules. */
+.pf-v5-theme-dark .pf-v5-c-masthead {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.pf-v5-theme-dark .pf-v5-c-masthead .pf-v5-c-masthead__main {
+  order: 0;
+  flex: 0 0 auto;
+  flex-basis: auto;
+  min-height: auto;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Drop the stacked bottom divider under the brand. */
+.pf-v5-theme-dark .pf-v5-c-masthead .pf-v5-c-masthead__main::before {
+  border-bottom: 0;
+}
+
+.pf-v5-theme-dark .pf-v5-c-masthead .pf-v5-c-masthead__content {
+  order: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ── Header user menu: same controls at every width ──
+   PatternFly swaps the username dropdown (md+) for a kebab (below md), and shows
+   the avatar at all widths. Keep the header consistent: always show the username
+   dropdown, drop the kebab, and hide the avatar when the screen is too narrow.
+   These override PatternFly visibility utilities (`pf-v5-u-hidden` =
+   `display: none !important`), so they need `!important` + higher specificity. */
+
+/* Always show the username dropdown. PatternFly hides it below md by putting
+   `pf-v5-u-hidden` (display:none !important) on its toolbar item; override that
+   with higher specificity + !important so the name shows at every width. */
+.pf-v5-c-masthead .pf-v5-c-toolbar__item.pf-v5-u-hidden {
+  display: flex !important;
+}
+
+/* Drop the redundant mobile kebab (its toolbar item carries
+   `pf-v5-u-hidden-on-md`, i.e. it is the one shown only below md). */
+.pf-v5-c-masthead .pf-v5-c-toolbar__item.pf-v5-u-hidden-on-md {
+  display: none !important;
+}
+
+/* Hide the profile icon (avatar) when the screen is too narrow. */
+@media screen and (max-width: 767px) {
+  .pf-v5-c-masthead .pf-v5-c-toolbar__item.pf-m-overflow-menu {
+    display: none !important;
+  }
+}
+
+/* Main content section uses the m-light variant. The light-100 remap above
+   already resolves it to navy; this matches PatternFly's selector specificity
+   so the override is robust even if the token chain changes. */
+.pf-v5-c-page__main-section.pf-m-light,
+.pf-v5-c-page__main-section {
+  --pf-v5-c-page__main-section--m-light--BackgroundColor: var(--altered-bg);
+  --pf-v5-c-page__main-section--BackgroundColor: var(--altered-bg);
+  /* Subtle radial glows, matching the login background. */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0, 194, 212, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 100%, rgba(201, 168, 76, 0.05) 0%, transparent 60%);
+  background-repeat: no-repeat;
+}
+
+.pf-v5-c-page__sidebar {
+  background-color: var(--altered-bg-card);
+}
+
+/* The personal-info form has a single section, so the ScrollForm "Jump to
+   section" navigation (rendered by @keycloak/keycloak-ui-shared, not editable
+   here) is redundant. Hide its grid column and let the form span full width.
+   `:has()` scopes this to the grid that actually contains the jump links. */
+.pf-v5-l-grid__item:has(.pf-v5-c-jump-links) {
+  display: none;
+}
+
+.pf-v5-l-grid:has(.pf-v5-c-jump-links) > .pf-v5-l-grid__item {
+  --pf-v5-l-grid__item--GridColumnEnd: span 12;
+}
+
+/* ── Form fields ──
+   PatternFly draws form-control borders with ::before (frame) + ::after (bottom
+   accent) pseudo-elements and no radius. Recreate the login look: rounded box,
+   solid input background + border, teal focus glow. */
+.pf-v5-c-form-control {
+  --pf-v5-c-form-control--BackgroundColor: var(--altered-input-bg);
+  /* Give the ::before frame a full, uniform border (incl. the bottom). */
+  --pf-v5-c-form-control--before--BorderTopColor: var(--altered-input-border);
+  --pf-v5-c-form-control--before--BorderRightColor: var(--altered-input-border);
+  --pf-v5-c-form-control--before--BorderLeftColor: var(--altered-input-border);
+  --pf-v5-c-form-control--before--BorderBottomWidth: var(--pf-v5-global--BorderWidth--sm);
+  --pf-v5-c-form-control--before--BorderBottomColor: var(--altered-input-border);
+  /* Drop the separate ::after underline accent (we use a focus glow instead). */
+  --pf-v5-c-form-control--after--BorderBottomColor: transparent;
+  --pf-v5-c-form-control--hover--after--BorderBottomColor: transparent;
+  --pf-v5-c-form-control--focus--after--BorderBottomColor: transparent;
+  /* Recessed navy for read-only / disabled fields (e.g. email) instead of grey. */
+  --pf-v5-c-form-control--m-readonly--BackgroundColor: var(--altered-bg);
+  --pf-v5-c-form-control--m-disabled--BackgroundColor: var(--altered-bg);
+  border-radius: 8px;
+}
+
+.pf-v5-c-form-control::before,
+.pf-v5-c-form-control::after {
+  border-radius: 8px;
+}
+
+.pf-v5-c-form-control:focus-within {
+  --pf-v5-c-form-control--before--BorderTopColor: var(--altered-teal);
+  --pf-v5-c-form-control--before--BorderRightColor: var(--altered-teal);
+  --pf-v5-c-form-control--before--BorderLeftColor: var(--altered-teal);
+  --pf-v5-c-form-control--before--BorderBottomColor: var(--altered-teal);
+  box-shadow: 0 0 0 3px rgba(0, 194, 212, 0.12);
+}
+
+/* ── Labels ── uppercase, letter-spaced, muted (matching login .form-label). */
+.pf-v5-c-form__label-text {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--altered-text-muted);
+}
+
+/* ── Buttons ── rounded corners like the login buttons. */
+.pf-v5-c-button {
+  --pf-v5-c-button--BorderRadius: 8px;
+  border-radius: 8px;
+}
+
+/* Primary buttons → brand gradient, matching login .btn-primary. */
+.pf-v5-c-button.pf-m-primary {
+  background: linear-gradient(135deg, var(--altered-teal) 0%, var(--altered-teal-dark) 100%);
+  color: var(--altered-bg);
+  font-weight: 600;
+}
+
+.pf-v5-c-button.pf-m-primary:hover {
+  opacity: 0.9;
+}

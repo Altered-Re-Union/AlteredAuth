@@ -25,20 +25,13 @@
       .keycloak__loading-container {
         height: 100vh;
         width: 100%;
-        color: #151515;
-        background-color: #fff;
+        color: #e2e8f0;
+        background-color: #080c17;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         margin: 0;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        .keycloak__loading-container {
-          color: #e0e0e0;
-          background-color: #1b1d21;
-        }
       }
 
       #loading-text {
@@ -58,22 +51,10 @@
       }
     </script>
     <#if darkMode>
+      <#-- Altered themes are always dark; force the dark class regardless of the
+           OS color-scheme so the console matches the rest of the themes. -->
       <script type="module" async blocking="render">
-          const DARK_MODE_CLASS = "${properties.kcDarkModeClass}";
-          const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-          updateDarkMode(mediaQuery.matches);
-          mediaQuery.addEventListener("change", (event) => updateDarkMode(event.matches));
-
-          function updateDarkMode(isEnabled) {
-            const { classList } = document.documentElement;
-
-            if (isEnabled) {
-              classList.add(DARK_MODE_CLASS);
-            } else {
-              classList.remove(DARK_MODE_CLASS);
-            }
-          }
+          document.documentElement.classList.add("${properties.kcDarkModeClass}");
       </script>
     </#if>
     <#if !isSecureContext>

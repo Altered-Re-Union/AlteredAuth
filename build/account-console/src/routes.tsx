@@ -6,7 +6,6 @@ import { Organizations } from "./organizations/Organizations";
 const DeviceActivity = lazy(() => import("./account-security/DeviceActivity"));
 const LinkedAccounts = lazy(() => import("./account-security/LinkedAccounts"));
 const SigningIn = lazy(() => import("./account-security/SigningIn"));
-const Applications = lazy(() => import("./applications/Applications"));
 const Groups = lazy(() => import("./groups/Groups"));
 const PersonalInfo = lazy(() => import("./personal-info/PersonalInfo"));
 const Resources = lazy(() => import("./resources/Resources"));
@@ -26,11 +25,6 @@ export const LinkedAccountsRoute: RouteObject = {
 export const SigningInRoute: RouteObject = {
   path: "account-security/signing-in",
   element: <SigningIn />,
-};
-
-export const ApplicationsRoute: RouteObject = {
-  path: "applications",
-  element: <Applications />,
 };
 
 export const GroupsRoute: RouteObject = {
@@ -73,7 +67,6 @@ export const routes: RouteObject[] = [
   DeviceActivityRoute,
   LinkedAccountsRoute,
   SigningInRoute,
-  ApplicationsRoute,
   GroupsRoute,
   OrganizationsRoute,
   PersonalInfoRoute,

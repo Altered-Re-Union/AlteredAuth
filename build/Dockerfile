@@ -26,6 +26,19 @@ RUN mvn clean package && \
     mkdir -p /result && \
     cp /app/target/min-age-validator-provider-1.0-SNAPSHOT.jar /result/min-age-validator-provider.jar
 
+# altered-account-ui — custom account console (React app packaged as a theme JAR).
+# The pom's frontend-maven-plugin downloads node and runs the vite build, then
+# bundles dist/ + the theme resources into the JAR (deployed like any provider).
+FROM maven:3.9-eclipse-temurin-17 AS account-console
+
+WORKDIR /app
+
+COPY account-console/ ./
+
+RUN mvn -B clean package && \
+    mkdir -p /result && \
+    cp /app/target/altered-account-ui-26.5.0.jar /result/altered-account-ui.jar
+
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} AS builder
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
@@ -36,6 +49,7 @@ WORKDIR /opt/keycloak
 
 COPY --from=unique-attribute-validator-provider /result/unique-attribute-validator-provider.jar /opt/keycloak/providers
 COPY --from=min-age-validator-provider /result/min-age-validator-provider.jar /opt/keycloak/providers
+COPY --from=account-console /result/altered-account-ui.jar /opt/keycloak/providers
 
 RUN /opt/keycloak/bin/kc.sh build
 
