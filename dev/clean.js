@@ -87,7 +87,14 @@ const TEST_USERS = [
     // on); without it the account is "not fully set up" and login fails. Same goes
     // for "birthDate" (min-age 16 gate) — seed a fixed adult date so the verify-
     // profile prompt never interrupts the seeded test users.
-    attributes: { pseudo: ["alice"], birthDate: ["1990-05-15"] },
+    // "locale" drives the user's language; the `profile` scope's locale mapper
+    // surfaces it as the `locale` claim in the id/access tokens the APIs read.
+    attributes: { pseudo: ["alice"], birthDate: ["1990-05-15"], locale: ["en"] },
+    // The realm default role carries the "account" client roles (view-profile /
+    // manage-account). Seeded users injected via import don't get it automatically,
+    // so without this they'd hit 401 on the account console. Name is "altered" (not
+    // "players") because the realm was renamed but the default role kept its name.
+    realmRoles: ["default-roles-altered"],
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
   {
@@ -98,7 +105,8 @@ const TEST_USERS = [
     lastName: "Tester",
     enabled: true,
     emailVerified: true,
-    attributes: { pseudo: ["bob"], birthDate: ["1988-11-02"] },
+    attributes: { pseudo: ["bob"], birthDate: ["1988-11-02"], locale: ["fr"] },
+    realmRoles: ["default-roles-altered"],
     credentials: [{ type: "password", value: "TestPassword1234", temporary: false }],
   },
 ];
@@ -153,6 +161,11 @@ delete raw.smtpServer;
 
 // Dev default: skip email verification so register flow works without SMTP.
 raw.verifyEmail = false;
+
+// Use the custom account console (altered-account-ui JAR baked into the image,
+// see build/Dockerfile) instead of the stock keycloak.v3 one. Pinned here so a
+// realm re-import doesn't silently fall back to the stock template.
+raw.accountTheme = "altered-account";
 
 // Drop service-account users orphaned by the client filter above, plus any prod
 // copy of our seeded users (matched by username) so the seed list wins.

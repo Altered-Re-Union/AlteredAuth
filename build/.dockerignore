@@ -1,0 +1,5 @@
+# Keep the Docker build context lean: the account console is built from source
+# inside the image (Maven frontend-plugin), so never ship local build artefacts.
+account-console/node_modules
+account-console/dist
+account-console/node
